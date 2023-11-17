@@ -2,7 +2,7 @@ package com.weather.forecast.models;
 
 import java.util.Map;
 
-class GeoLocationResponse {
+public class GeoLocationResponse {
     // name of the city in geo response.
     private String name;
     // List of local names of the city in geo response.
