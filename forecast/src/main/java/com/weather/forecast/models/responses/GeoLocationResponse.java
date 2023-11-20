@@ -1,11 +1,14 @@
-package com.weather.forecast.models;
+package com.weather.forecast.models.responses;
 
 import java.util.Map;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
+// This class represents the geo location response for one call 3.0 API.
 public class GeoLocationResponse {
     // name of the city in geo response.
     private String name;
     // List of local names of the city in geo response.
+    @JsonProperty("local_names")
     private Map<String, String> localNames;
     // Latitude of the city in geo response.
     private Double lat; 
