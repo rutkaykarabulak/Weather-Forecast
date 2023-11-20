@@ -5,8 +5,10 @@ import org.springframework.stereotype.Service;
 import com.weather.forecast.models.responses.GeoLocationResponse;
 import com.weather.forecast.models.responses.WeatherForecastResponse;
 import com.weather.forecast.utils.Constants;
+
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
-import com.weather.forecast.controllers.exceptions.*;;
 @Service
 public class ForecastService  implements IForecastService{
     private final RestTemplate restTemplate;
@@ -23,10 +25,13 @@ public class ForecastService  implements IForecastService{
             ResponseEntity<GeoLocationResponse[]> responseEntity = restTemplate.getForEntity(apiUrl, GeoLocationResponse[].class);
             if (responseEntity.getStatusCode().is2xxSuccessful()) {
                 GeoLocationResponse[] body = responseEntity.getBody();
+                if (body.length == 0) {
+                    return null;
+                }
                 geoResponse = body[0];
             }
-        } catch (CityNotFoundException e) {
-            throw new CityNotFoundException(city);
+        } catch (HttpClientErrorException | HttpServerErrorException e) {
+            System.out.println("HTTP error occured");
         }
         
         return geoResponse;
@@ -41,8 +46,8 @@ public class ForecastService  implements IForecastService{
         if (responseEntity.getStatusCode().is2xxSuccessful()) {
             result = responseEntity.getBody();
         }
-        } catch (ForecastNotFoundException e) {
-            throw new ForecastNotFoundException(city);
+        } catch (HttpClientErrorException | HttpServerErrorException e) {
+            System.out.println("HTTP error occured");
         }
         return result;
     }
