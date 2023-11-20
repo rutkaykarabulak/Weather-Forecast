@@ -1,5 +1,8 @@
 package com.weather.forecast.services;
 
+import java.util.Map;
+
+import org.apache.tomcat.util.bcel.classfile.Constant;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import com.weather.forecast.models.responses.GeoLocationResponse;
@@ -18,7 +21,12 @@ public class ForecastService  implements IForecastService{
     }
     // Gets longitude and latitude for given city. 
     public GeoLocationResponse GetLonAndLatForCity(String city) {
-        String apiUrl = Constants.geoLocationBaseURL + "&q=%s".formatted(city) + "&%s=%s".formatted(Constants.api, Constants.API_KEY);
+        String api_key = Constants.API_KEY;
+        Map<String, String> geoParameters = Map.of(
+            "q", city,
+            Constants.api, api_key
+        );
+        String apiUrl = Constants.buildApiUrl(Constants.geoLocationBaseURL, geoParameters);
         GeoLocationResponse geoResponse = null;
 
         try {
@@ -37,7 +45,14 @@ public class ForecastService  implements IForecastService{
         return geoResponse;
     }
     public WeatherForecastResponse Get48HoursForecastByLatAndLon(double lat, double lon, String city) {
-        String apiUrl = "";
+        String api_key = Constants.API_KEY;
+        Map<String, String> weatherParameters = Map.of(
+            Constants.lat, Double.toString(lat),
+            Constants.lon, Double.toString(lon),
+            Constants.api, api_key,
+            Constants.exclude, Constants.apiExclude
+        );
+        String apiUrl = Constants.buildApiUrl(Constants.weatherForecastBaseURL, weatherParameters);
         
         WeatherForecastResponse result = null;
         
