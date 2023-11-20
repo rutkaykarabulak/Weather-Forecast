@@ -6,7 +6,7 @@ import com.weather.forecast.models.responses.GeoLocationResponse;
 import com.weather.forecast.models.responses.WeatherForecastResponse;
 import com.weather.forecast.utils.Constants;
 import org.springframework.web.client.RestTemplate;
-
+import com.weather.forecast.controllers.exceptions.*;;
 @Service
 public class ForecastService  implements IForecastService{
     private final RestTemplate restTemplate;
@@ -18,17 +18,20 @@ public class ForecastService  implements IForecastService{
     public GeoLocationResponse GetLonAndLatForCity(String city) {
         String apiUrl = Constants.geoLocationBaseURL + "&q=%s".formatted(city) + "&%s=%s".formatted(Constants.api, Constants.API_KEY);
         GeoLocationResponse geoResponse = null;
-        ResponseEntity<GeoLocationResponse[]> responseEntity = restTemplate.getForEntity(apiUrl, GeoLocationResponse[].class);
-        if (responseEntity.getStatusCode().is2xxSuccessful()) {
-            GeoLocationResponse[] body = responseEntity.getBody();
-            geoResponse = body[0];
-        } 
-        else {
-        System.out.println("Failed to retrieve data.");
+
+        try {
+            ResponseEntity<GeoLocationResponse[]> responseEntity = restTemplate.getForEntity(apiUrl, GeoLocationResponse[].class);
+            if (responseEntity.getStatusCode().is2xxSuccessful()) {
+                GeoLocationResponse[] body = responseEntity.getBody();
+                geoResponse = body[0];
+            }
+        } catch (CityNotFoundException e) {
+            throw new CityNotFoundException(city);
         }
+        
         return geoResponse;
     }
-    public WeatherForecastResponse Get48HoursForecastByLatAndLon(double lat, double lon) {
+    public WeatherForecastResponse Get48HoursForecastByLatAndLon(double lat, double lon, String city) {
         String apiUrl = "";
         
         WeatherForecastResponse result = null;
@@ -38,8 +41,8 @@ public class ForecastService  implements IForecastService{
         if (responseEntity.getStatusCode().is2xxSuccessful()) {
             result = responseEntity.getBody();
         }
-        } catch (Exception e) {
-            System.out.println("An error happened during getting 48 hours forecast.");
+        } catch (ForecastNotFoundException e) {
+            throw new ForecastNotFoundException(city);
         }
         return result;
     }
