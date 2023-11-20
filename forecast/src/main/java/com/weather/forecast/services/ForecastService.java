@@ -8,7 +8,7 @@ import com.weather.forecast.utils.Constants;
 import org.springframework.web.client.RestTemplate;
 
 @Service
-public class ForecastService {
+public class ForecastService  implements IForecastService{
     private final RestTemplate restTemplate;
 
     public ForecastService(RestTemplate restTemplate) {
