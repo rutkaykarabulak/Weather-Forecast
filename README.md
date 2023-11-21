@@ -7,7 +7,10 @@
 
 ## How to Run?
 
-* TODO
+* In order to run the app you need to have a valid open weather one call 3.0 API key.
+* Insert your api key into forecast/src/main/java/com/wether/forecast/utils/Constants.java file.
+* Once you inserted your API key; for visual studio code users open the `ForecastApplication.java` file and run the app.
+* For those of who use the terminal, change your directory to forecast and run the following command `./mvnw clean spring-boot:run`
 
 ## API documentation
 
